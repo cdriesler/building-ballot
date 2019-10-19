@@ -1,6 +1,11 @@
 <template>
     <div id="heatmap">
-        <div class="svgar" ref="svgar" id="svgar" v-html="svg">
+        <div 
+        class="svgar" 
+        ref="svgar" 
+        id="svgar" 
+        v-html="svg"
+        @mousemove="">
             
         </div>
     </div>
@@ -36,12 +41,22 @@ import Vue from 'vue'
 import Svgar, { Create, Update, Locate } from 'svgar';
 import SvgarCube from 'svgar/dist/models/SvgarCube';
 import SvgarPath from 'svgar/dist/models/SvgarPath';
+import SvgarSlab from 'svgar/dist/models/SvgarSlab';
+
+interface PathReference {
+    id: string,
+    xMin: number,
+    yMin: number,
+    xMax: number,
+    yMax: number
+}
 
 export default Vue.extend({
     name: "heatmap",
     data() {
         return {
             cube: {} as SvgarCube,
+            paths: [] as PathReference[],
             w: 0,
             h: 0,
         }
@@ -55,19 +70,8 @@ export default Vue.extend({
         this.h = el ? el.clientHeight : 0;
 
         let slab = Create().svgar.slab("cells").then.build();
-        slab.setAllGeometry(this.makeGrid(this.w, this.h, 25));
-        Update().svgar.slab(slab).styles.to([
-            {
-                name: "default",
-                attributes: {
-                    "stroke": "red",
-                    "stroke-width": "0.5px",
-                    "fill": "none"
-                }
-            }
-        ]);
         Update().svgar.cube(this.cube).camera.extentsTo(0, 0, this.w, this.h);
-        Update().svgar.cube(this.cube).slabs.to([slab]);
+        Update().svgar.cube(this.cube).slabs.to(this.makeGrid(this.w, this.h, 25));
     },
     computed: {
         svg(): string {
@@ -79,24 +83,62 @@ export default Vue.extend({
         }
     },
     methods: {
-        makeGrid(width: number, height: number, size: number): SvgarPath[] {
-            let paths: SvgarPath[] = [];
+        makeGrid(width: number, height: number, size: number): SvgarSlab[] {
+            let slabs: SvgarSlab[] = [];
 
             for(let i = 0; i * size < width; i += 1) {
 
                 for(let j = 0; j * size < height; j += 1) {
-                    let sq = new Svgar.Builder.Polyline(i * size, j * size)
-                    .lineTo((i + 1) * size, j * size)
-                    .lineTo((i + 1) * size, (j + 1) * size)
-                    .lineTo(i * size, (j + 1) * size)
+                    let p: number[] = [
+                        i * size,
+                        j * size,
+                        (i + 1) * size,
+                        j * size,
+                        (i + 1) * size,
+                        (j + 1) * size,
+                        i * size,
+                        (j + 1) * size
+                    ];
+
+                    let slab = new SvgarSlab(`HM${i}${j}`);
+
+                    let sq = new Svgar.Builder.Polyline(p[0], p[1])
+                    .lineTo(p[2], p[3])
+                    .lineTo(p[4], p[5])
+                    .lineTo(p[6], p[7])
                     .close();
 
-                    paths.push(sq.build())
+                    let path = sq.build();
+
+                    slab.setAllGeometry([path]);
+                    slab.setAllStyles([
+                        {
+                            name: "default",
+                            attributes: {
+                                "stroke": "red",
+                                "stroke-width": "0.5px",
+                                "fill": "none"
+                            }
+                        }
+                    ]);
+                    slabs.push(slab);
+
+                    this.paths.push({
+                        id: slab.getId(),
+                        xMin: p[0],
+                        yMin: p[1],
+                        xMax: p[4],
+                        yMax: p[5]
+                    });
+
                 }
 
             }
 
-            return paths;
+            return slabs;
+        },
+        onMove(): {
+            
         }
     }
 })
