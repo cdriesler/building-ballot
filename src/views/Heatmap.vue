@@ -146,16 +146,20 @@ export default Vue.extend({
                 return;
             }
 
-            const box = (<Element>event.srcElement).getBoundingClientRect();
+            const box = (<Element>this.$refs.svgar).getBoundingClientRect();
             let x = event.pageX - box.left;
             let y = this.h - (event.pageY - box.top);
 
+            //console.log(`${x}, ${y}`);
+
             let target = this.paths.find(p => p.yMax > y && p.yMin < y && p.xMax > x && p.xMin < x);
+
             let cell = Locate().svgar.slab.withId(target ? target.id : "").in.svgar.cube(this.cube);
 
             if(cell) {
                 let o = cell.getAllStyles().find(x => x.name == "default");
                 let op = o ? +o.attributes["opacity"] + 0.05 : 0;
+                console.log(op);
                 Update().svgar.slab(cell).styles.to([
                     {
                         name: "default",
