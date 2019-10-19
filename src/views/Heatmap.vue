@@ -5,7 +5,7 @@
         ref="svgar" 
         id="svgar" 
         v-html="svg"
-        @mousemove="">
+        @mousemove="onMove">
             
         </div>
     </div>
@@ -59,6 +59,7 @@ export default Vue.extend({
             paths: [] as PathReference[],
             w: 0,
             h: 0,
+            prev: 0,
         }
     },
     created() {    
@@ -117,7 +118,8 @@ export default Vue.extend({
                             attributes: {
                                 "stroke": "red",
                                 "stroke-width": "0.5px",
-                                "fill": "none"
+                                "fill": "red",
+                                "opacity": "0"
                             }
                         }
                     ]);
@@ -137,8 +139,37 @@ export default Vue.extend({
 
             return slabs;
         },
-        onMove(): {
+        onMove(event: MouseEvent): void {
             
+            let t = Date.now();
+            if (t - this.prev < 50) {
+                return;
+            }
+
+            const box = (<Element>event.srcElement).getBoundingClientRect();
+            let x = event.pageX - box.left;
+            let y = this.h - (event.pageY - box.top);
+
+            let target = this.paths.find(p => p.yMax > y && p.yMin < y && p.xMax > x && p.xMin < x);
+            let cell = Locate().svgar.slab.withId(target ? target.id : "").in.svgar.cube(this.cube);
+
+            if(cell) {
+                let o = cell.getAllStyles().find(x => x.name == "default");
+                let op = o ? +o.attributes["opacity"] + 0.05 : 0;
+                Update().svgar.slab(cell).styles.to([
+                    {
+                        name: "default",
+                        attributes: {
+                            "stroke": "red",
+                            "sroke-width": "0.5px",
+                            "fill": "red",
+                            "opacity": op.toString(),
+                        }
+                    }
+                ])
+            }
+
+            this.prev = t;
         }
     }
 })
