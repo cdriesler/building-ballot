@@ -8,6 +8,9 @@
         @mousemove="onMove">
             
         </div>
+        <div class="db">
+            {{firebase}}
+        </div>
     </div>
 </template>
 
@@ -38,6 +41,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { db } from './../firebase';
 import Svgar, { Create, Update, Locate } from 'svgar';
 import SvgarCube from 'svgar/dist/models/SvgarCube';
 import SvgarPath from 'svgar/dist/models/SvgarPath';
@@ -60,10 +64,16 @@ export default Vue.extend({
             w: 0,
             h: 0,
             prev: 0,
+            firebase: {},
         }
     },
     created() {    
         this.cube = Create().svgar.cube("heatmap").then.build();
+
+        db.ref().on("child_added", doc => {
+            this.firebase = doc.toJSON() || {};
+        });
+
     },
     mounted() {
         let el = (<Element>this.$refs.svgar);
