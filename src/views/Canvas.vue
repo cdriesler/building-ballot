@@ -70,6 +70,7 @@
     import { ModelGltf } from 'vue-3d-model'
     import Heatmap from './Heatmap.vue';
     import VoteTotal from './../components/VoteTotal.vue';
+    import { db } from './../firebase';
 
     export default {
         components: {
@@ -80,16 +81,25 @@
         data() {
             return {
                 modelName: "option1",
-                a: 2,
-                b: 3,
-                c: 4,
+                a: 1,
+                b: 1,
+                c: 1,
                 interval: 50,
+                voters: [],
             }
         },
         mounted() {
-            setInterval(() => {
-                this.step();
-            }, this.interval);
+            db.ref("users/").on("value", data => {
+                this.parseVote(data.val());
+            });
+
+            db.ref().on("child_added", data => {
+                this.parseVote(data.val());
+            });
+
+            db.ref().on("child_changed", data => {
+                this.parseVote(data.val());
+            });
         },
         computed: {
             filePath() {
@@ -121,7 +131,6 @@
             step() {
                 let r = Math.random();
                 this.interval = r * 20;
-                console.log(r);
 
                 if ( r < 0.33) {
                     this.a = this.a + 1;
@@ -132,6 +141,39 @@
                 else {
                     this.c = this.c + 1;
                 }
+            },
+            parseVote(data) {
+                this.voters = [];
+                this.a = 1;
+                this.b = 1;
+                this.c = 1;
+
+                Object.keys(data).forEach(x => {
+                    Object.keys(data[x]).forEach(y => {
+                        this.voters.push( {
+                            name: y,
+                            vote: +data[x][y]["num"],
+                        });
+                    })
+                });
+
+                this.voters.forEach(vote => {
+                    let v = vote.vote;
+
+                    //console.log(v);
+
+                    if (v == 0) {
+                        this.a = this.a + 1;
+                    }
+                    else if (v == 1) {
+                        this.b = this.b + 1;
+                    }
+                    else {
+                        this.c = this.c + 1;
+                    }
+
+                    //console.log(`${this.a}/${this.b}/${this.c}`)
+                });
             }
         }
     }
