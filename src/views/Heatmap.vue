@@ -9,7 +9,7 @@
             
         </div>
         <div class="db">
-            {{firebase}}
+            
         </div>
     </div>
 </template>
@@ -18,22 +18,14 @@
 #heatmap {
     width: 100%;
     height: 100%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
 }
 
 .svgar {
-    width: calc(100vw - 30px);
-    max-width: 800px;
-    height: calc(100vw - 30px);
-    max-height: 800px;
+    width: 100%;
+    height: 100%;
 
     outline: 2px solid black;
 
-    margin-top: 15px;
     box-sizing: border-box;
 }
 
@@ -57,6 +49,7 @@ interface PathReference {
 
 export default Vue.extend({
     name: "heatmap-component",
+    props: ["options"],
     data() {
         return {
             cube: {} as SvgarCube,
@@ -65,6 +58,10 @@ export default Vue.extend({
             h: 0,
             prev: 0,
             firebase: {},
+            optA: {} as SvgarSlab,
+            optB: {} as SvgarSlab,
+            optC: {} as SvgarSlab,
+            heat: [] as SvgarSlab[],
         }
     },
     created() {    
@@ -74,15 +71,71 @@ export default Vue.extend({
             this.firebase = doc.toJSON() || {};
         });
 
+        let profile = {
+            name: "default",
+            attributes: {
+                "stroke": "black",
+                "fill": "white",
+                "stroke-width": "2px",
+            }
+        }
+
+        let pathA = new Svgar.Builder.Polyline(7.78, 0.81)
+        .lineTo(8.85, 2.74)
+        .lineTo(4.72, 5.02)
+        .lineTo(6.72, 8.65)
+        .lineTo(8.89, 7.45)
+        .lineTo(9.95, 9.37)
+        .lineTo(5.85, 11.63)
+        .lineTo(1.72, 4.16)
+        .close()
+        .build();
+
+        let optASlab = new Svgar.Slab("a");
+        optASlab.setElevation(10);
+        optASlab.setAllStyles([profile]);
+        optASlab.setAllGeometry([pathA]);
+        this.optA = optASlab;
+
+        let pathB = new Svgar.Builder.Polyline(3.47, 1.74)
+        .lineTo(6.53, 7.30)
+        .lineTo(8.71, 6.10)
+        .lineTo(9.77, 8.02)
+        .lineTo(5.68, 10.29)
+        .lineTo(1.55, 2.81)
+        .close()
+        .build()
+
+        let optBSlab = new Svgar.Slab("b");
+        optBSlab.setElevation(10);
+        optBSlab.setAllStyles([profile]);
+        optBSlab.setAllGeometry([pathB]);
+        this.optB = optBSlab;
+
+        let pathC = new Svgar.Builder.Polyline(7.74, 1.36)
+        .lineTo(8.80, 3.30)
+        .lineTo(5.60, 5.07)
+        .lineTo(8.31, 9.97)
+        .lineTo(6.38, 11.04)
+        .lineTo(2.61, 4.21)
+        .close()
+        .build();
+
+        let optCSlab = new Svgar.Slab("c");
+        optCSlab.setElevation(10);
+        optCSlab.setAllStyles([profile]);
+        optCSlab.setAllGeometry([pathC]);
+        this.optC = optCSlab;
     },
     mounted() {
         let el = (<Element>this.$refs.svgar);
         this.w = el ? el.clientWidth : 0;
         this.h = el ? el.clientHeight : 0;
 
+        this.heat = this.makeGrid(12, 12, 1);
+
         let slab = Create().svgar.slab("cells").then.build();
-        Update().svgar.cube(this.cube).camera.extentsTo(0, 0, this.w, this.h);
-        Update().svgar.cube(this.cube).slabs.to(this.makeGrid(this.w, this.h, 25));
+        Update().svgar.cube(this.cube).camera.extentsTo(0, 0, 12, 12);
     },
     computed: {
         svg(): string {
@@ -90,7 +143,30 @@ export default Vue.extend({
                 return "";
             }
 
+            const optionSlabs:any = {
+                "option1": this.optA,
+                "option2": this.optB,
+                "option3": this.optC
+            }
+
+            Update().svgar.cube(this.cube).slabs.to([...this.heat, optionSlabs[this.options]])
+
             return this.cube.compile(this.w, this.h);
+        }
+    },
+    watch: {
+        options: function() {
+            this.cube.slabs.filter(x => x.getName().length > 1).forEach(x => x.setAllStyles([
+                {
+                    name: "default",
+                    attributes: {
+                        "stroke": "red",
+                        "stroke-width": "0.5px",
+                        "fill": "red",
+                        "opacity": "0"
+                    }
+                }
+            ]));
         }
     },
     methods: {
@@ -157,8 +233,8 @@ export default Vue.extend({
             }
 
             const box = (<Element>this.$refs.svgar).getBoundingClientRect();
-            let x = event.pageX - box.left;
-            let y = this.h - (event.pageY - box.top);
+            let x = ((event.pageX - box.left) / this.w) * 12;
+            let y = ((this.h - (event.pageY - box.top)) / this.h) * 12;
 
             //console.log(`${x}, ${y}`);
 
