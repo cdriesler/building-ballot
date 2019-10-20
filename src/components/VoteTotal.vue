@@ -12,15 +12,25 @@
 
 <style scoped>
 #vt {
+    margin-top: 15px;
     width: 100%;
     height: 50px;
 }
 
 .name {
     width: 100%;
-    height: 25px;
-    line-height: 25px;
+    padding-left: 15px;
+    height: 45px;
+    line-height: 45px;
+    font-size: 15px;
+    font-weight: bold;
+    vertical-align: middle;
     text-align: left;
+}
+
+.name:hover {
+    cursor: pointer;
+    background: gainsboro;
 }
 
 .name:hover {

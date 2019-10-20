@@ -35,7 +35,7 @@ export default Vue.extend({
 }
 
 .header img {
-  margin-left: 25px;
+  margin-left: 40px;
 }
 
 .body {

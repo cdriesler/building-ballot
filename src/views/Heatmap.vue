@@ -24,7 +24,10 @@
     width: 100%;
     height: 100%;
 
-    outline: 2px solid black;
+    border: 2px solid grey;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    background: white;
 
     box-sizing: border-box;
 }

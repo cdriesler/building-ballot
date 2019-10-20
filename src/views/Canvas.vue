@@ -1,7 +1,10 @@
 <template>
 <div id="main">
     <div class="sidebar">
-        <img src="./../assets/map.jpg" />
+        <!-- <img width="300px" src="./../assets/map.jpg" /> -->
+        <div class="heatmap">
+        <heatmap :options="modelName"></heatmap>
+        </div>  
 
         <vote-total @pick="pickModelA" :name="'Option A'" :pct="pctA"></vote-total>
         <vote-total @pick="pickModelB" :name="'Option B'" :pct="pctB"></vote-total>
@@ -11,10 +14,6 @@
     <div class="viewer">
         <model-gltf :src="filePath"></model-gltf> 
     </div>
-
-    <div class="heatmap">
-        <heatmap :options="modelName"></heatmap>
-    </div>  
 </div>
 </template> 
 
@@ -36,6 +35,9 @@
 .sidebar {
     height: 100%;
     width: 300px;
+    margin-left: 15px;
+
+    border-radius: 15px;
 
     background: grey;
 }
@@ -46,12 +48,8 @@
 }
 
 .heatmap {
-    position: absolute;
-    right: 15px;
-    top: 200px;
-
-    width: 250px;
-    height: 250px;
+    width: 300px;
+    height: 300px;
 }
 
 .diagram {
