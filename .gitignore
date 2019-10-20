@@ -21,3 +21,6 @@ yarn-error.log*
 *.sw?
 
 firebase.ts
+/.vs
+*.lock
+
