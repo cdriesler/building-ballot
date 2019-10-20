@@ -1,6 +1,6 @@
 <template>
     <div id="vt" ref="main">
-        <div class="name">
+        <div class="name" @click="pick" >
             {{name.toUpperCase()}}
         </div>
         <div class="pct">
@@ -21,6 +21,10 @@
     height: 25px;
     line-height: 25px;
     text-align: left;
+}
+
+.name:hover {
+    cursor: pointer;
 }
 
 .pct {
@@ -52,6 +56,11 @@ export default Vue.extend({
     computed: {
         fillWidth(): number {
             return this.w * this.pct;
+        }
+    },
+    methods: {
+        pick(): void {
+            this.$emit("pick");
         }
     }
 })

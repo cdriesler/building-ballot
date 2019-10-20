@@ -1,11 +1,11 @@
 <template>
 <div id="main">
     <div class="sidebar">
-        <button @click="pickModel('option1')">Option 1</button>
-        <button @click="pickModel('option2')">Option 2</button>
-        <button @click="pickModel('option3')">Option 3</button>
+        <img src="./../assets/map.jpg" />
 
-        <vote-total :name="'test'" :pct="0.3"></vote-total>
+        <vote-total @pick="pickModelA" :name="'Option A'" :pct="pctA"></vote-total>
+        <vote-total @pick="pickModelB" :name="'Option B'" :pct="pctB"></vote-total>
+        <vote-total @pick="pickModelC" :name="'Option C'" :pct="pctC"></vote-total>
     </div>
 
     <div class="viewer">
@@ -27,6 +27,10 @@
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: flex-start;
+}
+
+.pct:hover {
+    cursor: pointer;
 }
 
 .sidebar {
@@ -77,17 +81,59 @@
         },
         data() {
             return {
-                modelName: "option1"
+                modelName: "option1",
+                a: 2,
+                b: 3,
+                c: 4,
+                interval: 50,
             }
+        },
+        mounted() {
+            setInterval(() => {
+                this.step();
+            }, this.interval);
         },
         computed: {
             filePath() {
-                return `./${this.modelName}.gltf`
+                return `./${this.modelName}.gltf`;
+            },
+            pctA() {
+                return this.a / (this.a + this.b + this.c);
+            },
+            pctB() {
+                return this.b / (this.a + this.b + this.c);
+            },
+            pctC() {
+                return this.c / (this.a + this.b + this.c);
             }
         },
         methods: {
             pickModel(name) {
                 this.modelName = name;
+            },
+            pickModelA() {
+                this.modelName = "option1";
+            },
+            pickModelB() {
+                this.modelName = "option2";
+            },
+            pickModelC() {
+                this.modelName = "option3";
+            },
+            step() {
+                let r = Math.random();
+                this.interval = r * 20;
+                console.log(r);
+
+                if ( r < 0.33) {
+                    this.a = this.a + 1;
+                }
+                else if ( r < 0.66) {
+                    this.b = this.b + 1;
+                }
+                else {
+                    this.c = this.c + 1;
+                }
             }
         }
     }
