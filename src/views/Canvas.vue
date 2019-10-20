@@ -7,7 +7,7 @@
 </div>
 </template> 
 
-<script lang="ts">
+<script>
     import { ModelGltf } from 'vue-3d-model'
 
     export default {
@@ -20,12 +20,12 @@
             }
         },
         computed: {
-            filePath(): string{
+            filePath() {
                 return `./${this.modelName}.gltf`
             }
         },
         methods: {
-            pickModel(name: string): void {
+            pickModel(name) {
                 this.modelName = name;
             }
         }
