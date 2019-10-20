@@ -1,23 +1,53 @@
 <template>
 <div id="main">
-    <div class="diagram">
-        <heatmap :options="modelName"></heatmap>
-    </div>
-    <model-gltf :src="filePath"></model-gltf>  
-    <button @click="pickModel('option1')">Option 1</button>
-    <button @click="pickModel('option2')">Option 2</button>
-    <button @click="pickModel('option3')">Option 3</button>
-    <div style="width: 250px;">
+    <div class="sidebar">
+        <button @click="pickModel('option1')">Option 1</button>
+        <button @click="pickModel('option2')">Option 2</button>
+        <button @click="pickModel('option3')">Option 3</button>
+
         <vote-total :name="'test'" :pct="0.3"></vote-total>
     </div>
 
+    <div class="viewer">
+        <model-gltf :src="filePath"></model-gltf> 
+    </div>
+
+    <div class="heatmap">
+        <heatmap :options="modelName"></heatmap>
+    </div>  
 </div>
 </template> 
 
 <style>
-.main {
+#main {
     width: 100%;
     height: 100%;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.sidebar {
+    height: 100%;
+    width: 300px;
+
+    background: grey;
+}
+
+.viewer {
+    height: 100%;
+    flex-grow: 1;
+}
+
+.heatmap {
+    position: absolute;
+    right: 15px;
+    top: 200px;
+
+    width: 250px;
+    height: 250px;
 }
 
 .diagram {
