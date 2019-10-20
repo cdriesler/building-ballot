@@ -7,6 +7,9 @@
     <button @click="pickModel('option1')">Option 1</button>
     <button @click="pickModel('option2')">Option 2</button>
     <button @click="pickModel('option3')">Option 3</button>
+    <div style="width: 250px;">
+        <vote-total :name="'test'" :pct="0.3"></vote-total>
+    </div>
 
 </div>
 </template> 
@@ -34,11 +37,13 @@
 <script>
     import { ModelGltf } from 'vue-3d-model'
     import Heatmap from './Heatmap.vue';
+    import VoteTotal from './../components/VoteTotal.vue';
 
     export default {
         components: {
             ModelGltf,
-            Heatmap
+            Heatmap,
+            VoteTotal,
         },
         data() {
             return {

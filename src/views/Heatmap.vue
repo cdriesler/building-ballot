@@ -156,22 +156,14 @@ export default Vue.extend({
     },
     watch: {
         options: function() {
-            this.cube.slabs.filter(x => x.getName().length > 1).forEach(x => x.setAllStyles([
-                {
-                    name: "default",
-                    attributes: {
-                        "stroke": "red",
-                        "stroke-width": "0.5px",
-                        "fill": "red",
-                        "opacity": "0"
-                    }
-                }
-            ]));
+            this.heat = this.makeGrid(12, 12, 1);
         }
     },
     methods: {
         makeGrid(width: number, height: number, size: number): SvgarSlab[] {
             let slabs: SvgarSlab[] = [];
+
+            this.paths = [];
 
             for(let i = 0; i * size < width; i += 1) {
 
