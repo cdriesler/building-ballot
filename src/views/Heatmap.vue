@@ -56,7 +56,7 @@ interface PathReference {
 }
 
 export default Vue.extend({
-    name: "heatmap",
+    name: "heatmap-component",
     data() {
         return {
             cube: {} as SvgarCube,
