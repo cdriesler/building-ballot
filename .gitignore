@@ -20,7 +20,6 @@ yarn-error.log*
 *.sln
 *.sw?
 
-firebase.ts
 /.vs
 *.lock
 
