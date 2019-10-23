@@ -18,13 +18,13 @@ Team Members:
 - Riya Patel - Pei Cobb Freed & Partners - (Market Analysis/ Interior AR Layout)
 - Allie Bosarge - Shepley Bullfinch - (Market Analysis/Interior AR Layout and Finish Selection)
 - Xinye Lin - Independent Multidisciplinary Artists - ( Concept Design/ Video / Presentation )
-- Clifton Harness - Test Fit - (Building Options/Brand Curato
+- Clifton Harness - Test Fit - (Building Options/Brand Curator)
 
 ## Getting Started
 
 Just fire-Up a web browser and go to this [address](https://bldg-ballot.herokuapp.com/).
 
-The Unity AR application is available for download from Google Drive here.
+The Unity AR application is available for download from Google Drive [here](https://drive.google.com/open?id=1620VpHP6BCAv5XmQZXUqDi2XZmXjwOx1).
 
 ### Technologies Used
 
@@ -33,3 +33,7 @@ The Unity AR application is available for download from Google Drive here.
 - Vue
 - Firebase
 - Revit
+- MapBox
+- ARKit
+- TestFit
+- Hypar
